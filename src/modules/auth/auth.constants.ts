@@ -1,0 +1,4 @@
+export const AUTH_CONSTANTS = {
+  BCRYPT_SALT_ROUNDS: 12,
+  JWT_EXPIRES_IN: '7d',
+};
