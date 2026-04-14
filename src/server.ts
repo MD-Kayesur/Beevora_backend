@@ -4,6 +4,7 @@ import app from './app';
 import config from './config/env';
 import logger from './config/logger';
 import { seedAdmin } from './utils/seedAdmin';
+import { seedProducts } from './utils/seedProducts';
 
 let server: Server;
 
@@ -12,8 +13,9 @@ async function main() {
     await mongoose.connect(config.database_url as string);
     logger.info('📦 Database connection successful');
 
-    // Seed admin user
+    // Seed initial data
     await seedAdmin();
+    await seedProducts();
 
     server = app.listen(config.port, () => {
       logger.info(`🚀 Server running on port ${config.port}`);

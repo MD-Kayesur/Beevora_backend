@@ -3,13 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
 const product_model_1 = require("./product.model");
 const createProduct = async (payload) => {
+    console.log(payload);
     const result = await product_model_1.Product.create(payload);
+    console.log(result);
     return result;
 };
 const getAllProducts = async (query) => {
     // Basic filtering for now
-    const { searchTerm, category, minPrice, maxPrice, isFeatured, sort, page = 1, limit = 10 } = query;
-    const anyQuery = { isActive: true };
+    const { searchTerm, category, minPrice, maxPrice, isFeatured, sort, page = 1, limit = 10, showInactive } = query;
+    const anyQuery = {};
+    if (showInactive !== 'true') {
+        anyQuery.isActive = true;
+    }
     if (searchTerm) {
         anyQuery.$or = [
             { name: { $regex: searchTerm, $options: 'i' } },

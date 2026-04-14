@@ -4,8 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const env_1 = __importDefault(require("../config/env"));
+const logger_1 = __importDefault(require("../config/logger"));
 const zod_1 = require("zod");
 const globalErrorHandler = (error, req, res, next) => {
+    // Log error for debugging
+    logger_1.default.error('Error in API:', error);
     let statusCode = 500;
     let message = 'Something went wrong!';
     let errorMessages = [];

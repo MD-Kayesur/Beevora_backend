@@ -7,7 +7,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = __importDefault(require("../config/env"));
 const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const auth = (...requiredRoles) => (0, catchAsync_1.default)(async (req, res, next) => {
-    const token = req.headers.authorization;
+    let token = req.headers.authorization;
+    if (token && token.startsWith('Bearer ')) {
+        token = token.split(' ')[1];
+    }
     if (!token) {
         throw new Error('You are not authorized');
     }
