@@ -93,7 +93,7 @@ const refreshToken = async (token) => {
     if (!user) {
         throw new Error('User not found');
     }
-    const accessToken = jwt.sign({ id: user._id, email: user.email, role: user.role }, env_1.default.jwt_secret, { expiresIn: env_1.default.jwt_expires_in });
+    const accessToken = createToken({ id: user._id, email: user.email, role: user.role }, env_1.default.jwt_secret, env_1.default.jwt_expires_in);
     return {
         accessToken,
     };

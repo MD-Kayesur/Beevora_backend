@@ -10,6 +10,7 @@ const user_route_1 = require("../modules/user/user.route");
 const order_route_1 = require("../modules/order/order.route");
 const admin_route_1 = require("../modules/admin/admin.route");
 const coupon_route_1 = require("../modules/coupon/coupon.route");
+const cart_route_1 = require("../modules/cart/cart.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -35,6 +36,10 @@ const moduleRoutes = [
     {
         path: '/admin',
         route: admin_route_1.AdminRoutes,
+    },
+    {
+        path: '/cart',
+        route: cart_route_1.CartRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

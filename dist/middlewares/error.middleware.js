@@ -32,6 +32,14 @@ const globalErrorHandler = (error, req, res, next) => {
                 },
             ]
             : [];
+        if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+            statusCode = 401;
+            message = 'Unauthorized: Invalid or expired token';
+        }
+        else if (error.code === 11000) {
+            statusCode = 409;
+            message = 'Duplicate field error: A resource with this value already exists';
+        }
     }
     res.status(statusCode).json({
         success: false,
