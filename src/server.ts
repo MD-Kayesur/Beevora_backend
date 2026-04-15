@@ -5,6 +5,7 @@ import config from './config/env';
 import logger from './config/logger';
 import { seedAdmin } from './utils/seedAdmin';
 import { seedProducts } from './utils/seedProducts';
+import { seedCoupons } from './utils/seedCoupons';
 
 let server: Server;
 
@@ -16,6 +17,7 @@ async function main() {
     // Seed initial data
     await seedAdmin();
     await seedProducts();
+    await seedCoupons();
 
     server = app.listen(config.port, () => {
       logger.info(`🚀 Server running on port ${config.port}`);

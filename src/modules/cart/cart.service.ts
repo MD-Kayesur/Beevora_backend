@@ -1,6 +1,8 @@
 import httpStatus from 'http-status';
 import { Product } from '../product/product.model';
 import { Cart } from './cart.model';
+import ApiError from '../../utils/ApiError';
+import { Coupon } from '../coupon/coupon.model';
 
 const getCart = async (userId: string) => {
   let cart = await Cart.findOne({ user: userId }).populate('items.product');
@@ -13,7 +15,7 @@ const getCart = async (userId: string) => {
 const addToCart = async (userId: string, productId: string, quantity: number) => {
   const product = await Product.findById(productId);
   if (!product) {
-    throw new Error('Product not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
 
   let cart = await Cart.findOne({ user: userId });
@@ -47,10 +49,10 @@ const addToCart = async (userId: string, productId: string, quantity: number) =>
 
 const updateCartItem = async (userId: string, itemId: string, quantity: number) => {
   const cart = await Cart.findOne({ user: userId });
-  if (!cart) throw new Error('Cart not found');
+  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
   const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
-  if (itemIndex === -1) throw new Error('Item not found in cart');
+  if (itemIndex === -1) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found in cart');
 
   cart.items[itemIndex].quantity = quantity;
 
@@ -69,7 +71,7 @@ const updateCartItem = async (userId: string, itemId: string, quantity: number) 
 
 const removeFromCart = async (userId: string, itemId: string) => {
   const cart = await Cart.findOne({ user: userId });
-  if (!cart) throw new Error('Cart not found');
+  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
   cart.items = cart.items.filter((item: any) => item._id.toString() !== itemId);
 
@@ -88,7 +90,7 @@ const removeFromCart = async (userId: string, itemId: string) => {
 
 const clearCart = async (userId: string) => {
   const cart = await Cart.findOne({ user: userId });
-  if (!cart) throw new Error('Cart not found');
+  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
   cart.items = [];
   cart.subtotal = 0;
@@ -101,15 +103,14 @@ const clearCart = async (userId: string) => {
 
 const applyCoupon = async (userId: string, code: string) => {
   const cart = await Cart.findOne({ user: userId });
-  if (!cart) throw new Error('Cart not found');
+  if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
-  const Coupon = require('../coupon/coupon.model').Coupon;
   const coupon = await Coupon.findOne({ code, isActive: true });
 
-  if (!coupon) throw new Error('Invalid or inactive coupon');
-  if (coupon.expiryDate < new Date()) throw new Error('Coupon expired');
+  if (!coupon) throw new ApiError(httpStatus.NOT_FOUND, 'Invalid or inactive coupon');
+  if (coupon.expiryDate < new Date()) throw new ApiError(httpStatus.BAD_REQUEST, 'Coupon expired');
   if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
-    throw new Error('Coupon usage limit reached');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Coupon usage limit reached');
   }
 
   let discount = 0;

@@ -9,7 +9,7 @@ const zod_1 = require("zod");
 const globalErrorHandler = (error, req, res, next) => {
     // Log error for debugging
     logger_1.default.error('Error in API:', error);
-    let statusCode = 500;
+    let statusCode = error.statusCode || 500;
     let message = 'Something went wrong!';
     let errorMessages = [];
     if (error instanceof zod_1.ZodError) {

@@ -7,7 +7,7 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   // Log error for debugging
   logger.error('Error in API:', error);
 
-  let statusCode = 500;
+  let statusCode = error.statusCode || 500;
   let message = 'Something went wrong!';
   let errorMessages: any[] = [];
 
