@@ -52,6 +52,17 @@ const removeFromCart = (0, catchAsync_1.default)(async (req, res) => {
         data: result,
     });
 });
+const applyCoupon = (0, catchAsync_1.default)(async (req, res) => {
+    const userId = req.user.id;
+    const { code } = req.body;
+    const result = await cart_service_1.CartService.applyCoupon(userId, code);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Coupon applied successfully',
+        data: result,
+    });
+});
 const clearCart = (0, catchAsync_1.default)(async (req, res) => {
     const userId = req.user.id;
     const result = await cart_service_1.CartService.clearCart(userId);
@@ -67,5 +78,6 @@ exports.CartController = {
     addToCart,
     updateCartItem,
     removeFromCart,
+    applyCoupon,
     clearCart,
 };

@@ -12,5 +12,6 @@ router.get('/', (0, auth_middleware_1.default)('user', 'admin'), cart_controller
 router.post('/add', (0, auth_middleware_1.default)('user', 'admin'), cart_controller_1.CartController.addToCart);
 router.patch('/:itemId', (0, auth_middleware_1.default)('user', 'admin'), cart_controller_1.CartController.updateCartItem);
 router.delete('/:itemId', (0, auth_middleware_1.default)('user', 'admin'), cart_controller_1.CartController.removeFromCart);
+router.post('/coupon', (0, auth_middleware_1.default)('user', 'admin'), cart_controller_1.CartController.applyCoupon);
 router.delete('/', (0, auth_middleware_1.default)('user', 'admin'), cart_controller_1.CartController.clearCart);
 exports.CartRoutes = router;

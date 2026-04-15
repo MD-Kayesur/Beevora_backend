@@ -11,4 +11,5 @@ export interface ICart {
   subtotal: number;
   discount: number;
   total: number;
+  coupon?: string;
 }

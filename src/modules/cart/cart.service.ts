@@ -99,10 +99,40 @@ const clearCart = async (userId: string) => {
   return cart;
 };
 
+const applyCoupon = async (userId: string, code: string) => {
+  const cart = await Cart.findOne({ user: userId });
+  if (!cart) throw new Error('Cart not found');
+
+  const Coupon = require('../coupon/coupon.model').Coupon;
+  const coupon = await Coupon.findOne({ code, isActive: true });
+
+  if (!coupon) throw new Error('Invalid or inactive coupon');
+  if (coupon.expiryDate < new Date()) throw new Error('Coupon expired');
+  if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
+    throw new Error('Coupon usage limit reached');
+  }
+
+  let discount = 0;
+  if (coupon.discountType === 'percentage') {
+    discount = (cart.subtotal * coupon.discountValue) / 100;
+  } else {
+    discount = coupon.discountValue;
+  }
+
+  cart.discount = discount;
+  cart.total = cart.subtotal - discount;
+  // Store applied coupon code (optional, but good for UI)
+  (cart as any).coupon = code;
+
+  await cart.save();
+  return cart;
+};
+
 export const CartService = {
   getCart,
   addToCart,
   updateCartItem,
   removeFromCart,
+  applyCoupon,
   clearCart,
 };

@@ -13,6 +13,7 @@ const cartSchema = new Schema<ICart>(
     subtotal: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
+    coupon: { type: String },
   },
   {
     timestamps: true,

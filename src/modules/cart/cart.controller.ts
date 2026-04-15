@@ -56,6 +56,19 @@ const removeFromCart = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const applyCoupon = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const { code } = req.body;
+  const result = await CartService.applyCoupon(userId, code);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Coupon applied successfully',
+    data: result,
+  });
+});
+
 const clearCart = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.id;
   const result = await CartService.clearCart(userId);
@@ -73,5 +86,6 @@ export const CartController = {
   addToCart,
   updateCartItem,
   removeFromCart,
+  applyCoupon,
   clearCart,
 };
