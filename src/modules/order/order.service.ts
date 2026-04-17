@@ -1,5 +1,6 @@
 import { Order, IOrder } from './order.model';
 import { Product } from '../product/product.model';
+import { SpreadsheetService } from './spreadsheet.service';
 
 const createOrder = async (payload: IOrder): Promise<IOrder> => {
   // Check stock before creating order
@@ -18,6 +19,11 @@ const createOrder = async (payload: IOrder): Promise<IOrder> => {
       $inc: { stock: -item.quantity },
     });
   }
+
+  // Save to Google Sheets (Async)
+  result.populate('items.product').then((populatedOrder) => {
+    SpreadsheetService.saveToSheet(populatedOrder);
+  });
 
   return result;
 };
