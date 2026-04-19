@@ -17,6 +17,16 @@ const cartSchema = new Schema<ICart>(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+    },
   }
 );
 
