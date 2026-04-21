@@ -80,8 +80,27 @@ const login = async (payload) => {
         },
     };
 };
+const refreshToken = async (token) => {
+    let verifiedToken = null;
+    try {
+        verifiedToken = jwt.verify(token, env_1.default.jwt_refresh_secret);
+    }
+    catch (err) {
+        throw new Error('Invalid Refresh Token');
+    }
+    const { email } = verifiedToken;
+    const user = await user_model_1.User.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const accessToken = createToken({ id: user._id, email: user.email, role: user.role }, env_1.default.jwt_secret, env_1.default.jwt_expires_in);
+    return {
+        accessToken,
+    };
+};
 exports.AuthService = {
     register,
     login,
+    refreshToken,
     createToken,
 };

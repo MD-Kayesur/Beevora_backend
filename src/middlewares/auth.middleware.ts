@@ -6,7 +6,10 @@ import catchAsync from '../utils/catchAsync';
 
 const auth = (...requiredRoles: string[]) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    let token = req.headers.authorization;
+    if (token && token.startsWith('Bearer ')) {
+      token = token.split(' ')[1];
+    }
 
     if (!token) {
       throw new Error('You are not authorized');

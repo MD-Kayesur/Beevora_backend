@@ -11,4 +11,5 @@ const auth_controller_1 = require("./auth.controller");
 const router = express_1.default.Router();
 router.post('/register', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.register), auth_controller_1.AuthController.register);
 router.post('/login', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.login), auth_controller_1.AuthController.login);
+router.post('/refresh-token', auth_controller_1.AuthController.refreshToken);
 exports.AuthRoutes = router;

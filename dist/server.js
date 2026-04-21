@@ -8,13 +8,15 @@ const app_1 = __importDefault(require("./app"));
 const env_1 = __importDefault(require("./config/env"));
 const logger_1 = __importDefault(require("./config/logger"));
 const seedAdmin_1 = require("./utils/seedAdmin");
+const seedProducts_1 = require("./utils/seedProducts");
 let server;
 async function main() {
     try {
         await mongoose_1.default.connect(env_1.default.database_url);
         logger_1.default.info('📦 Database connection successful');
-        // Seed admin user
+        // Seed initial data
         await (0, seedAdmin_1.seedAdmin)();
+        await (0, seedProducts_1.seedProducts)();
         server = app_1.default.listen(env_1.default.port, () => {
             logger_1.default.info(`🚀 Server running on port ${env_1.default.port}`);
         });

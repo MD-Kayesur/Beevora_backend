@@ -2,15 +2,20 @@ import { IProduct } from './product.interface';
 import { Product } from './product.model';
 
 const createProduct = async (payload: IProduct): Promise<IProduct> => {
+  console.log(payload);
   const result = await Product.create(payload);
+  console.log(result);
   return result;
 };
 
 const getAllProducts = async (query: Record<string, unknown>) => {
   // Basic filtering for now
-  const { searchTerm, category, minPrice, maxPrice, isFeatured, sort, page = 1, limit = 10 } = query;
+  const { searchTerm, category, minPrice, maxPrice, isFeatured, sort, page = 1, limit = 10, showInactive } = query;
   
-  const anyQuery: any = { isActive: true };
+  const anyQuery: any = {};
+  if (showInactive !== 'true') {
+    anyQuery.isActive = true;
+  }
   if (searchTerm) {
     anyQuery.$or = [
       { name: { $regex: searchTerm, $options: 'i' } },

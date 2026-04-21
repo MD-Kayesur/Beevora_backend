@@ -4,7 +4,10 @@ import logger from '../config/logger';
 import { ZodError } from 'zod';
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  let statusCode = 500;
+  // Log error for debugging
+  logger.error('Error in API:', error);
+
+  let statusCode = error.statusCode || 500;
   let message = 'Something went wrong!';
   let errorMessages: any[] = [];
 
@@ -27,6 +30,14 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
           },
         ]
       : [];
+
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      statusCode = 401;
+      message = 'Unauthorized: Invalid or expired token';
+    } else if ((error as any).code === 11000) {
+      statusCode = 409;
+      message = 'Duplicate field error: A resource with this value already exists';
+    }
   }
 
   res.status(statusCode).json({
