@@ -24,7 +24,7 @@ const productSchema = new Schema<IProduct>(
     toJSON: {
       virtuals: true,
       transform: (doc, ret) => {
-        delete ret.__v;
+        delete (ret as any).__v;
         return ret;
       },
     },

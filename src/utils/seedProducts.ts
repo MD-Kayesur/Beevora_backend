@@ -156,6 +156,36 @@ const products = [
     isFeatured: true,
     rating: 5.0,
     reviewCount: 32
+  },
+  {
+    name: 'Classic Cotton Polo',
+    description: '100% organic cotton polo shirt, breathable and stylish for any occasion.',
+    price: 35.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/polo/800/1000',
+    images: ['https://picsum.photos/seed/polo/800/1000'],
+    stock: 50,
+    sku: 'BVR-CLO-POLO-011',
+    isActive: true,
+    isFeatured: true,
+    rating: 4.5,
+    reviewCount: 28
+  },
+  {
+    name: 'Premium Denim Jeans',
+    description: 'High-quality denim jeans with a perfect slim fit and classic wash.',
+    price: 75.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/jeans/800/1000',
+    images: ['https://picsum.photos/seed/jeans/800/1000'],
+    stock: 40,
+    sku: 'BVR-CLO-JEAN-012',
+    isActive: true,
+    isFeatured: false,
+    rating: 4.7,
+    reviewCount: 15
   }
 ];
 
@@ -166,7 +196,7 @@ export const seedProducts = async () => {
     logger.info('🗑️ Cleared existing products.');
 
     await Product.insertMany(products);
-    logger.info('✅ 10 Beevora Honey products seeded successfully via seedProducts');
+    logger.info(`✅ ${products.length} products seeded successfully via seedProducts`);
   } catch (error) {
     logger.error('❌ Error seeding products:', error);
   }
