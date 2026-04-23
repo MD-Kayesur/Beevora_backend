@@ -1,13 +1,16 @@
 import { Order, IOrder } from './order.model';
 import { Product } from '../product/product.model';
+import { Honey } from '../honey/honey.model';
+import { Clothing } from '../clothing/clothing.model';
 import { SpreadsheetService } from './spreadsheet.service';
 
 const createOrder = async (payload: IOrder): Promise<IOrder> => {
   // Check stock before creating order
   for (const item of payload.items) {
-    const product = await Product.findById(item.product);
+    const Model: any = item.productModel === 'Honey' ? Honey : item.productModel === 'Clothing' ? Clothing : Product;
+    const product = await Model.findById(item.product);
     if (!product) {
-      throw new Error(`Product not found with ID: ${item.product}. Your cart may contain outdated items.`);
+      throw new Error(`Product not found with ID: ${item.product} in collection ${item.productModel}.`);
     }
     if (product.stock < item.quantity) {
       throw new Error(`Insufficient stock for product: ${product.name}`);
@@ -18,7 +21,8 @@ const createOrder = async (payload: IOrder): Promise<IOrder> => {
 
   // Update stock after order creation
   for (const item of payload.items) {
-    await Product.findByIdAndUpdate(item.product, {
+    const Model: any = item.productModel === 'Honey' ? Honey : item.productModel === 'Clothing' ? Clothing : Product;
+    await Model.findByIdAndUpdate(item.product, {
       $inc: { stock: -item.quantity },
     });
   }

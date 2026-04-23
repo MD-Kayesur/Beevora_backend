@@ -1,5 +1,7 @@
 import httpStatus from 'http-status';
 import { Product } from '../product/product.model';
+import { Honey } from '../honey/honey.model';
+import { Clothing } from '../clothing/clothing.model';
 import { Cart } from './cart.model';
 import ApiError from '../../utils/ApiError';
 import { Coupon } from '../coupon/coupon.model';
@@ -13,9 +15,21 @@ const getCart = async (userId: string) => {
 };
 
 const addToCart = async (userId: string, productId: string, quantity: number) => {
-  const product = await Product.findById(productId);
+  let product: any = await Product.findById(productId);
+  let productModel = 'Product';
+
   if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+    product = await Honey.findById(productId);
+    productModel = 'Honey';
+  }
+  
+  if (!product) {
+    product = await Clothing.findById(productId);
+    productModel = 'Clothing';
+  }
+
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found across all collections');
   }
 
   let cart = await Cart.findOne({ user: userId });
@@ -30,7 +44,7 @@ const addToCart = async (userId: string, productId: string, quantity: number) =>
   if (existingItemIndex > -1) {
     cart.items[existingItemIndex].quantity += quantity;
   } else {
-    cart.items.push({ product: productId as any, quantity });
+    cart.items.push({ product: productId as any, productModel: productModel as any, quantity });
   }
 
   // Recalculate totals (simplified for now)

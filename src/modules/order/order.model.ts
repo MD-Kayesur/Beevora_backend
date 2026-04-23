@@ -2,6 +2,7 @@ import { Schema, model, Types } from 'mongoose';
 
 export interface IOrderItem {
   product: Types.ObjectId;
+  productModel: 'Honey' | 'Clothing';
   quantity: number;
   price: number;
 }
@@ -21,7 +22,16 @@ const orderSchema = new Schema<IOrder>(
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
       {
-        product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        product: { 
+          type: Schema.Types.ObjectId, 
+          required: true, 
+          refPath: 'items.productModel' 
+        },
+        productModel: {
+          type: String,
+          required: true,
+          enum: ['Honey', 'Clothing']
+        },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
       },

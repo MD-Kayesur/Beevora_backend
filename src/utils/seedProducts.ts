@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { Product } from '../modules/product/product.model';
+import { Honey } from '../modules/honey/honey.model';
+import { Clothing } from '../modules/clothing/clothing.model';
 import { Cart } from '../modules/cart/cart.model';
-import config from '../config/env';
 import logger from '../config/logger';
 
-const products = [
+const honeyProducts = [
   {
     name: 'Beevora Original Honey',
     description: 'Our signature blend of 100% pure, natural honey. Perfect for daily use.',
@@ -157,7 +157,10 @@ const products = [
     isFeatured: true,
     rating: 5.0,
     reviewCount: 32
-  },
+  }
+];
+
+const clothingProducts = [
   {
     name: 'Classic Cotton Polo',
     description: '100% organic cotton polo shirt, breathable and stylish for any occasion.',
@@ -171,7 +174,9 @@ const products = [
     isActive: true,
     isFeatured: true,
     rating: 4.5,
-    reviewCount: 28
+    reviewCount: 28,
+    size: ['S', 'M', 'L', 'XL'],
+    color: ['White', 'Navy', 'Grey']
   },
   {
     name: 'Premium Denim Jeans',
@@ -186,21 +191,152 @@ const products = [
     isActive: true,
     isFeatured: false,
     rating: 4.7,
-    reviewCount: 15
+    reviewCount: 15,
+    size: ['30', '32', '34', '36'],
+    color: ['Indigo', 'Black']
+  },
+  {
+    name: 'Essential White Tee',
+    description: 'A closet staple made from premium heavyweight cotton.',
+    price: 25.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/tee/800/1000',
+    images: ['https://picsum.photos/seed/tee/800/1000'],
+    stock: 100,
+    sku: 'BVR-CLO-TEE-013',
+    isActive: true,
+    isFeatured: true,
+    rating: 4.9,
+    reviewCount: 45
+  },
+  {
+    name: 'Urban Cargo Pants',
+    description: 'Rugged yet stylish cargo pants for the modern explorer.',
+    price: 65.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/cargo/800/1000',
+    images: ['https://picsum.photos/seed/cargo/800/1000'],
+    stock: 35,
+    sku: 'BVR-CLO-CARG-014',
+    isActive: true,
+    isFeatured: false,
+    rating: 4.4,
+    reviewCount: 22
+  },
+  {
+    name: 'Sleek Bomber Jacket',
+    description: 'Lightweight jacket with a waterproof finish and minimalist design.',
+    price: 89.99,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/jacket/800/1000',
+    images: ['https://picsum.photos/seed/jacket/800/1000'],
+    stock: 25,
+    sku: 'BVR-CLO-JKT-015',
+    isActive: true,
+    isFeatured: true,
+    rating: 4.8,
+    reviewCount: 38
+  },
+  {
+    name: 'Merino Wool Sweater',
+    description: 'Ultra-soft merino wool that keeps you warm without the bulk.',
+    price: 55.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/sweater/800/1000',
+    images: ['https://picsum.photos/seed/sweater/800/1000'],
+    stock: 30,
+    sku: 'BVR-CLO-SWT-016',
+    isActive: true,
+    isFeatured: false,
+    rating: 4.7,
+    reviewCount: 19
+  },
+  {
+    name: 'Active Running Shorts',
+    description: 'Moisture-wicking shorts designed for peak athletic performance.',
+    price: 32.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/shorts/800/1000',
+    images: ['https://picsum.photos/seed/shorts/800/1000'],
+    stock: 60,
+    sku: 'BVR-CLO-SHRT-017',
+    isActive: true,
+    isFeatured: false,
+    rating: 4.3,
+    reviewCount: 31
+  },
+  {
+    name: 'Oxford Button-Down',
+    description: 'Crisp Oxford shirt that transitions perfectly from office to dinner.',
+    price: 48.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/oxford/800/1000',
+    images: ['https://picsum.photos/seed/oxford/800/1000'],
+    stock: 45,
+    sku: 'BVR-CLO-OXF-018',
+    isActive: true,
+    isFeatured: true,
+    rating: 4.6,
+    reviewCount: 27
+  },
+  {
+    name: 'Chino Trousers',
+    description: 'Versatile chinos with a hint of stretch for all-day comfort.',
+    price: 59.00,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/chino/800/1000',
+    images: ['https://picsum.photos/seed/chino/800/1000'],
+    stock: 50,
+    sku: 'BVR-CLO-CHIN-019',
+    isActive: true,
+    isFeatured: false,
+    rating: 4.5,
+    reviewCount: 42
+  },
+  {
+    name: 'Graphic Hoodie',
+    description: 'Comfortable fleece hoodie with a modern artistic print.',
+    price: 49.99,
+    category: 'Clothing',
+    brand: 'Beevora Wear',
+    thumbnail: 'https://picsum.photos/seed/hoodie/800/1000',
+    images: ['https://picsum.photos/seed/hoodie/800/1000'],
+    stock: 40,
+    sku: 'BVR-CLO-HOD-020',
+    isActive: true,
+    isFeatured: true,
+    rating: 4.8,
+    reviewCount: 56
   }
 ];
 
 export const seedProducts = async () => {
   try {
-    // Clear existing products to only keep the honey collection
-    await Product.deleteMany({});
-    logger.info('🗑️ Cleared existing products.');
+    // Clear collections
+    await Honey.deleteMany({});
+    logger.info('🗑️ Cleared existing Honey products.');
+
+    await Clothing.deleteMany({});
+    logger.info('🗑️ Cleared existing Clothing products.');
     
     await Cart.deleteMany({});
     logger.info('🗑️ Cleared existing carts.');
 
-    await Product.insertMany(products);
-    logger.info(`✅ ${products.length} products seeded successfully via seedProducts`);
+    // Seed Honey
+    await Honey.insertMany(honeyProducts);
+    logger.info(`✅ ${honeyProducts.length} Honey products seeded.`);
+
+    // Seed Clothing
+    await Clothing.insertMany(clothingProducts);
+    logger.info(`✅ ${clothingProducts.length} Clothing products seeded.`);
+
   } catch (error) {
     logger.error('❌ Error seeding products:', error);
   }
