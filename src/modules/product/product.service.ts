@@ -1,5 +1,7 @@
 import { IProduct } from './product.interface';
 import { Product } from './product.model';
+import { Honey } from '../honey/honey.model';
+import { Clothing } from '../clothing/clothing.model';
 
 const createProduct = async (payload: IProduct): Promise<IProduct> => {
   console.log(payload);
@@ -32,12 +34,36 @@ const getAllProducts = async (query: Record<string, unknown>) => {
 
   const skip = (Number(page) - 1) * Number(limit);
   
-  const products = await Product.find(anyQuery)
-    .sort(sort as string || '-createdAt')
-    .skip(skip)
-    .limit(Number(limit));
+  let products: any[] = [];
+  let total = 0;
 
-  const total = await Product.countDocuments(anyQuery);
+  if (category === 'Honey') {
+    products = await Honey.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
+    total = await Honey.countDocuments(anyQuery);
+  } else if (category === 'Clothing') {
+    products = await Clothing.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
+    total = await Clothing.countDocuments(anyQuery);
+  } else if (!category || category === 'All') {
+    // If no specific category, provide a mix as requested (6 each if possible)
+    const [honeyProducts, clothingProducts, baseProducts] = await Promise.all([
+      Honey.find(anyQuery).sort(sort as string || '-createdAt').limit(6),
+      Clothing.find(anyQuery).sort(sort as string || '-createdAt').limit(6),
+      Product.find(anyQuery).sort(sort as string || '-createdAt').limit(6)
+    ]);
+    
+    products = [...honeyProducts, ...clothingProducts, ...baseProducts].slice(0, Number(limit));
+    
+    const [honeyTotal, clothingTotal, baseTotal] = await Promise.all([
+      Honey.countDocuments(anyQuery),
+      Clothing.countDocuments(anyQuery),
+      Product.countDocuments(anyQuery)
+    ]);
+    total = honeyTotal + clothingTotal + baseTotal;
+  } else {
+    products = await Product.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
+    total = await Product.countDocuments(anyQuery);
+  }
+
   const totalPages = Math.ceil(total / Number(limit));
 
   return {
@@ -52,7 +78,9 @@ const getAllProducts = async (query: Record<string, unknown>) => {
 };
 
 const getProductById = async (id: string): Promise<IProduct | null> => {
-  const result = await Product.findById(id);
+  let result = await Product.findById(id);
+  if (!result) result = await Honey.findById(id);
+  if (!result) result = await Clothing.findById(id);
   return result;
 };
 
