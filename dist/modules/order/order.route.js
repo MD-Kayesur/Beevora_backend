@@ -9,7 +9,7 @@ const order_controller_1 = require("./order.controller");
 const auth_middleware_1 = __importDefault(require("../../middlewares/auth.middleware"));
 const router = express_1.default.Router();
 router.post('/', (0, auth_middleware_1.default)('user', 'admin'), order_controller_1.OrderController.createOrder);
-router.get('/my-orders', (0, auth_middleware_1.default)('user', 'admin'), order_controller_1.OrderController.getMyOrders);
+router.get('/my', (0, auth_middleware_1.default)('user', 'admin'), order_controller_1.OrderController.getMyOrders);
 // Admin only routes
 router.get('/', (0, auth_middleware_1.default)('admin'), order_controller_1.OrderController.getAllOrders);
 router.patch('/:id/status', (0, auth_middleware_1.default)('admin'), order_controller_1.OrderController.updateOrderStatus);

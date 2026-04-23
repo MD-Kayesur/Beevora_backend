@@ -36,7 +36,18 @@ const login = (0, catchAsync_1.default)(async (req, res) => {
         },
     });
 });
+const refreshToken = (0, catchAsync_1.default)(async (req, res) => {
+    const { refreshToken } = req.cookies;
+    const result = await auth_service_1.AuthService.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Access token retrieved successfully!',
+        data: result,
+    });
+});
 exports.AuthController = {
     register,
     login,
+    refreshToken,
 };

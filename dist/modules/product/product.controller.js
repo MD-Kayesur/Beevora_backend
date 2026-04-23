@@ -8,7 +8,9 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const product_service_1 = require("./product.service");
+const logger_1 = __importDefault(require("../../config/logger"));
 const createProduct = (0, catchAsync_1.default)(async (req, res) => {
+    logger_1.default.info('Creating product with body:', req.body);
     const result = await product_service_1.ProductService.createProduct(req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.CREATED,

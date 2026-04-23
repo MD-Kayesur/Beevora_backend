@@ -7,6 +7,10 @@ import { AdminRoutes } from '../modules/admin/admin.route';
 
 import { CouponRoutes } from '../modules/coupon/coupon.route';
 
+import { CartRoutes } from '../modules/cart/cart.route';
+import { HoneyRoutes } from '../modules/honey/honey.route';
+import { ClothingRoutes } from '../modules/clothing/clothing.route';
+
 const router = express.Router();
 
 const moduleRoutes = [
@@ -33,6 +37,18 @@ const moduleRoutes = [
   {
     path: '/admin',
     route: AdminRoutes,
+  },
+  {
+    path: '/cart',
+    route: CartRoutes,
+  },
+  {
+    path: '/honey',
+    route: HoneyRoutes,
+  },
+  {
+    path: '/clothing',
+    route: ClothingRoutes,
   },
 ];
 

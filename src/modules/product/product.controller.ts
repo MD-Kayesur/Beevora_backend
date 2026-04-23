@@ -3,11 +3,13 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { ProductService } from './product.service';
+import logger from '../../config/logger';
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
+  logger.info('Creating product with body:', req.body);
   const result = await ProductService.createProduct(req.body);
 
-  sendResponse(res, {
+  sendResponse(res, { 
     statusCode: httpStatus.CREATED,
     success: true,
     message: 'Product created successfully!',
