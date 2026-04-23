@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Product } from '../modules/product/product.model';
+import { Cart } from '../modules/cart/cart.model';
 import config from '../config/env';
 import logger from '../config/logger';
 
@@ -194,6 +195,9 @@ export const seedProducts = async () => {
     // Clear existing products to only keep the honey collection
     await Product.deleteMany({});
     logger.info('🗑️ Cleared existing products.');
+    
+    await Cart.deleteMany({});
+    logger.info('🗑️ Cleared existing carts.');
 
     await Product.insertMany(products);
     logger.info(`✅ ${products.length} products seeded successfully via seedProducts`);

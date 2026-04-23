@@ -6,8 +6,11 @@ const createOrder = async (payload: IOrder): Promise<IOrder> => {
   // Check stock before creating order
   for (const item of payload.items) {
     const product = await Product.findById(item.product);
-    if (!product || product.stock < item.quantity) {
-      throw new Error(`Insufficient stock for product: ${product?.name || 'Unknown'}`);
+    if (!product) {
+      throw new Error(`Product not found with ID: ${item.product}. Your cart may contain outdated items.`);
+    }
+    if (product.stock < item.quantity) {
+      throw new Error(`Insufficient stock for product: ${product.name}`);
     }
   }
 
