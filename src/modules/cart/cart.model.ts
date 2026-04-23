@@ -2,7 +2,16 @@ import { Schema, model } from 'mongoose';
 import { ICart } from './cart.interface';
 
 const cartItemSchema = new Schema({
-  product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  product: { 
+    type: Schema.Types.ObjectId, 
+    required: true, 
+    refPath: 'items.productModel' 
+  },
+  productModel: {
+    type: String,
+    required: true,
+    enum: ['Honey', 'Clothing']
+  },
   quantity: { type: Number, required: true, min: 1 },
 });
 
@@ -20,7 +29,7 @@ const cartSchema = new Schema<ICart>(
     toJSON: {
       virtuals: true,
       transform: (doc, ret) => {
-        delete ret.__v;
+        delete (ret as any).__v;
         return ret;
       },
     },
