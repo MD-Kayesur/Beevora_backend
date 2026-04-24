@@ -12,4 +12,6 @@ export default {
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET || 'very-secret-refresh-secret',
   jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
   bcrypt_salt_rounds: Number(process.env.BCRYPT_SALT_ROUNDS) || 12,
+  email_user: process.env.EMAIL_USER || 'rmdkayesur@gmail.com',
+  email_pass: process.env.EMAIL_PASS || 'kayes1122',
 };
