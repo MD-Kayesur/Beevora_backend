@@ -3,7 +3,7 @@ import config from '../../config/env';
 
 const sendContactEmail = async (payload: { firstName: string; lastName: string; email: string; message: string }) => {
   // Check for credentials - If they are placeholders, we use "Test Mode" (Console Log)
-  const isTestMode = !config.email_pass || config.email_pass === 'kayes1122' || config.email_pass === '12345';
+  const isTestMode = !config.email_pass || config.email_pass === '12345';
 
   if (isTestMode) {
     console.log('--- [CONTACT FORM TEST MODE] ---');
@@ -21,7 +21,7 @@ const sendContactEmail = async (payload: { firstName: string; lastName: string; 
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'rmdkayesur@gmail.com',
+    host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {

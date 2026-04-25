@@ -3,7 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cart = void 0;
 const mongoose_1 = require("mongoose");
 const cartItemSchema = new mongoose_1.Schema({
-    product: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Product', required: true },
+    product: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        refPath: 'items.productModel'
+    },
+    productModel: {
+        type: String,
+        required: true,
+        enum: ['Honey', 'Clothing']
+    },
     quantity: { type: Number, required: true, min: 1 },
 });
 const cartSchema = new mongoose_1.Schema({
@@ -15,5 +24,15 @@ const cartSchema = new mongoose_1.Schema({
     coupon: { type: String },
 }, {
     timestamps: true,
+    toJSON: {
+        virtuals: true,
+        transform: (doc, ret) => {
+            delete ret.__v;
+            return ret;
+        },
+    },
+    toObject: {
+        virtuals: true,
+    },
 });
 exports.Cart = (0, mongoose_1.model)('Cart', cartSchema);

@@ -1,23 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Product = void 0;
+exports.Honey = void 0;
 const mongoose_1 = require("mongoose");
-const productSchema = new mongoose_1.Schema({
+const honeySchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     originalPrice: { type: Number },
-    category: { type: String, required: true },
+    category: { type: String, required: true, default: 'Honey' },
     brand: { type: String, required: true },
-    images: { type: [String], default: [] },
+    images: [{ type: String, required: true }],
     thumbnail: { type: String, required: true },
     rating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
-    stock: { type: Number, required: true, default: 0 },
+    stock: { type: Number, required: true },
     sku: { type: String, required: true, unique: true },
-    tags: { type: [String], default: [] },
+    tags: [{ type: String }],
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    mgo: { type: String },
+    origin: { type: String },
+    volume: { type: String },
 }, {
     timestamps: true,
     toJSON: {
@@ -27,8 +30,5 @@ const productSchema = new mongoose_1.Schema({
             return ret;
         },
     },
-    toObject: {
-        virtuals: true,
-    },
 });
-exports.Product = (0, mongoose_1.model)('Product', productSchema);
+exports.Honey = (0, mongoose_1.model)('Honey', honeySchema);

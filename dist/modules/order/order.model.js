@@ -6,7 +6,16 @@ const orderSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
         {
-            product: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Product', required: true },
+            product: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                required: true,
+                refPath: 'items.productModel'
+            },
+            productModel: {
+                type: String,
+                required: true,
+                enum: ['Honey', 'Clothing']
+            },
             quantity: { type: Number, required: true },
             price: { type: Number, required: true },
         },
@@ -26,5 +35,15 @@ const orderSchema = new mongoose_1.Schema({
     transactionId: { type: String },
 }, {
     timestamps: true,
+    toJSON: {
+        virtuals: true,
+        transform: (doc, ret) => {
+            delete ret.__v;
+            return ret;
+        },
+    },
+    toObject: {
+        virtuals: true,
+    },
 });
 exports.Order = (0, mongoose_1.model)('Order', orderSchema);

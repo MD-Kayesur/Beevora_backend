@@ -26,7 +26,7 @@ const getAllClothing = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getClothingById = catchAsync(async (req: Request, res: Response) => {
-  const result = await ClothingService.getClothingById(req.params.id);
+  const result = await ClothingService.getClothingById(req.params.id as string);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -36,7 +36,7 @@ const getClothingById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateClothing = catchAsync(async (req: Request, res: Response) => {
-  const result = await ClothingService.updateClothing(req.params.id, req.body);
+  const result = await ClothingService.updateClothing(req.params.id as string, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -46,7 +46,7 @@ const updateClothing = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteClothing = catchAsync(async (req: Request, res: Response) => {
-  const result = await ClothingService.deleteClothing(req.params.id);
+  const result = await ClothingService.deleteClothing(req.params.id as string);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -14,4 +14,7 @@ export default {
   bcrypt_salt_rounds: Number(process.env.BCRYPT_SALT_ROUNDS) || 12,
   email_user: process.env.EMAIL_USER || 'rmdkayesur@gmail.com',
   email_pass: process.env.EMAIL_PASS || 'kayes1122',
+  spreadsheet_id: process.env.SPREADSHEET_ID || '',
+  google_client_email: process.env.GOOGLE_CLIENT_EMAIL || '',
+  google_private_key: process.env.GOOGLE_PRIVATE_KEY || '',
 };

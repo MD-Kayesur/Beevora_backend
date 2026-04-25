@@ -9,6 +9,7 @@ const env_1 = __importDefault(require("./config/env"));
 const logger_1 = __importDefault(require("./config/logger"));
 const seedAdmin_1 = require("./utils/seedAdmin");
 const seedProducts_1 = require("./utils/seedProducts");
+const seedCoupons_1 = require("./utils/seedCoupons");
 let server;
 async function main() {
     try {
@@ -17,6 +18,7 @@ async function main() {
         // Seed initial data
         await (0, seedAdmin_1.seedAdmin)();
         await (0, seedProducts_1.seedProducts)();
+        await (0, seedCoupons_1.seedCoupons)();
         server = app_1.default.listen(env_1.default.port, () => {
             logger_1.default.info(`🚀 Server running on port ${env_1.default.port}`);
         });

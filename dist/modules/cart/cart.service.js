@@ -6,8 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const product_model_1 = require("../product/product.model");
+const honey_model_1 = require("../honey/honey.model");
+const clothing_model_1 = require("../clothing/clothing.model");
 const cart_model_1 = require("./cart.model");
 const ApiError_1 = __importDefault(require("../../utils/ApiError"));
+const coupon_model_1 = require("../coupon/coupon.model");
 const getCart = async (userId) => {
     let cart = await cart_model_1.Cart.findOne({ user: userId }).populate('items.product');
     if (!cart) {
@@ -16,9 +19,18 @@ const getCart = async (userId) => {
     return cart;
 };
 const addToCart = async (userId, productId, quantity) => {
-    const product = await product_model_1.Product.findById(productId);
+    let product = await product_model_1.Product.findById(productId);
+    let productModel = 'Product';
     if (!product) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'Product not found');
+        product = await honey_model_1.Honey.findById(productId);
+        productModel = 'Honey';
+    }
+    if (!product) {
+        product = await clothing_model_1.Clothing.findById(productId);
+        productModel = 'Clothing';
+    }
+    if (!product) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'Product not found across all collections');
     }
     let cart = await cart_model_1.Cart.findOne({ user: userId });
     if (!cart) {
@@ -29,7 +41,7 @@ const addToCart = async (userId, productId, quantity) => {
         cart.items[existingItemIndex].quantity += quantity;
     }
     else {
-        cart.items.push({ product: productId, quantity });
+        cart.items.push({ product: productId, productModel: productModel, quantity });
     }
     // Recalculate totals (simplified for now)
     await cart.populate('items.product');
@@ -90,8 +102,7 @@ const applyCoupon = async (userId, code) => {
     const cart = await cart_model_1.Cart.findOne({ user: userId });
     if (!cart)
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'Cart not found');
-    const Coupon = require('../coupon/coupon.model').Coupon;
-    const coupon = await Coupon.findOne({ code, isActive: true });
+    const coupon = await coupon_model_1.Coupon.findOne({ code, isActive: true });
     if (!coupon)
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, 'Invalid or inactive coupon');
     if (coupon.expiryDate < new Date())

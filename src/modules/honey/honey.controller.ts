@@ -26,7 +26,7 @@ const getAllHoney = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getHoneyById = catchAsync(async (req: Request, res: Response) => {
-  const result = await HoneyService.getHoneyById(req.params.id);
+  const result = await HoneyService.getHoneyById(req.params.id as string);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -36,7 +36,7 @@ const getHoneyById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateHoney = catchAsync(async (req: Request, res: Response) => {
-  const result = await HoneyService.updateHoney(req.params.id, req.body);
+  const result = await HoneyService.updateHoney(req.params.id as string, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -46,7 +46,7 @@ const updateHoney = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteHoney = catchAsync(async (req: Request, res: Response) => {
-  const result = await HoneyService.deleteHoney(req.params.id);
+  const result = await HoneyService.deleteHoney(req.params.id as string);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
