@@ -1,11 +1,20 @@
 import nodemailer from 'nodemailer';
 import config from '../../config/env';
+import { Contact } from './contact.model';
 
 const sendContactEmail = async (payload: { firstName: string; lastName: string; email: string; message: string }) => {
   // Check for credentials - If they are placeholders, we use "Test Mode" (Console Log)
-  const isTestMode = !config.email_pass || config.email_pass === '12345';
+  const pass = (config.email_pass || '').trim();
+  const isTestMode = !pass || pass === '12345' || pass === 'kayes1122' || pass === 'your-app-password';
 
   if (isTestMode) {
+    // Save to Database even in Test Mode so user can verify DB insertion
+    const contactData = {
+      ...payload,
+      date: new Date().toLocaleString(),
+    };
+    await Contact.create(contactData);
+
     console.log('--- [CONTACT FORM TEST MODE] ---');
     console.log(`From: ${payload.firstName} ${payload.lastName} <${payload.email}>`);
     console.log(`To: ${config.email_user}`);
@@ -16,7 +25,7 @@ const sendContactEmail = async (payload: { firstName: string; lastName: string; 
     return { 
       success: true, 
       isTestMode: true,
-      message: 'Test Mode: Message logged to console. Update .env with a valid Gmail App Password for real delivery.' 
+      message: 'Test Mode Success! Message saved to database. To send real emails, you MUST use a 16-character Google App Password.' 
     };
   }
 
@@ -50,11 +59,28 @@ const sendContactEmail = async (payload: { firstName: string; lastName: string; 
   };
 
   try {
+    // Save to Database
+    const contactData = {
+      ...payload,
+      date: new Date().toLocaleString(),
+    };
+    await Contact.create(contactData);
+
+    // Send Email
     const result = await transporter.sendMail(mailOptions);
     return { success: true, result };
   } catch (error: any) {
     console.error('Nodemailer Error:', error);
-    return { success: false, message: error.message };
+    
+    let errorMessage = error.message;
+    // Catch both 535 and 534 Gmail error codes
+    if (error.message.includes('535') || error.message.includes('534') || error.message.includes('Invalid login') || error.message.includes('Application-specific password required')) {
+      errorMessage = 'Google Secure Login Required: You MUST use a 16-character App Password. Your regular password was rejected.';
+    } else if (error.message.includes('ECONNREFUSED')) {
+      errorMessage = 'Could not connect to Gmail SMTP server. Check your internet connection or firewall.';
+    }
+    
+    return { success: false, message: errorMessage };
   }
 };
 
