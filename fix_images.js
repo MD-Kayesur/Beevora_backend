@@ -14,62 +14,38 @@ const clothingImages = [
   'https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&q=80&w=600'
 ];
 
-const oldGarbageImages = [
-  'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=600',
-  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600',
-  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600'
-];
-
 async function updateImages() {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected to DB');
     const db = mongoose.connection.db;
 
-    console.log('Removing old generic images...');
-    await db.collection('clothings').updateMany({}, { $pull: { images: { $in: oldGarbageImages } } });
-    await db.collection('honeys').updateMany({}, { $pull: { images: { $in: oldGarbageImages } } });
-    await db.collection('products').updateMany({}, { $pull: { images: { $in: oldGarbageImages } } });
-
-    console.log('Adding specific images based on category...');
-    
-    // Clothings
-    const cRes = await db.collection('clothings').updateMany(
-      {},
-      { $addToSet: { images: { $each: clothingImages } } }
-    );
-    console.log(`Updated ${cRes.modifiedCount} clothing items with cloth images.`);
-    
-    // Honeys
-    const hRes = await db.collection('honeys').updateMany(
-      {},
-      { $addToSet: { images: { $each: honeyImages } } }
-    );
-    console.log(`Updated ${hRes.modifiedCount} honey items with honey images.`);
-
-    // Base Products Collection
-    const productsCursor = await db.collection('products').find({}).toArray();
-    let pModifiedCount = 0;
-    for (let p of productsCursor) {
-      if (p.category === 'Clothing') {
-        await db.collection('products').updateOne({ _id: p._id }, { $addToSet: { images: { $each: clothingImages } } });
-        pModifiedCount++;
-      } else if (p.category === 'Honey') {
-        await db.collection('products').updateOne({ _id: p._id }, { $addToSet: { images: { $each: honeyImages } } });
-        pModifiedCount++;
-      } else {
-        await db.collection('products').updateOne({ _id: p._id }, { $addToSet: { images: { $each: honeyImages } } });
-        pModifiedCount++;
-      }
+    // Reset clothing
+    const clothingsCursor = await db.collection('clothings').find({}).toArray();
+    for(let p of clothingsCursor) {
+       await db.collection('clothings').updateOne({ _id: p._id }, { $set: { images: [p.thumbnail, ...clothingImages] } });
     }
-    console.log(`Updated ${pModifiedCount} base product items with category specific images.`);
+    console.log("updated clothings");
 
-    console.log('Done fixing images!');
-  } catch (err) {
-    console.error(err);
+    // Reset honey
+    const honeyCursor = await db.collection('honeys').find({}).toArray();
+    for(let p of honeyCursor) {
+       await db.collection('honeys').updateOne({ _id: p._id }, { $set: { images: [p.thumbnail, ...honeyImages] } });
+    }
+    console.log("updated honeys");
+
+    // Reset base products
+    const productsCursor = await db.collection('products').find({}).toArray();
+    for(let p of productsCursor) {
+       if (p.category === 'Clothing') {
+           await db.collection('products').updateOne({ _id: p._id }, { $set: { images: [p.thumbnail, ...clothingImages] } });
+       } else {
+           await db.collection('products').updateOne({ _id: p._id }, { $set: { images: [p.thumbnail, ...honeyImages] } });
+       }
+    }
+    console.log("updated products");
+    
   } finally {
     await mongoose.disconnect();
   }
 }
-
 updateImages();
