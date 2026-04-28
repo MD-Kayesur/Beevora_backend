@@ -9,6 +9,7 @@ export interface IHoney {
   brand: string;
   images: string[];
   thumbnail: string;
+  hoverImage?: string;
   rating: number;
   reviewCount: number;
   stock: number;
@@ -31,6 +32,7 @@ const honeySchema = new Schema<IHoney>(
     brand: { type: String, required: true },
     images: [{ type: String, required: true }],
     thumbnail: { type: String, required: true },
+    hoverImage: { type: String },
     rating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
     stock: { type: Number, required: true },
