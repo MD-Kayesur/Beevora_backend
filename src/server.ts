@@ -6,6 +6,7 @@ import logger from './config/logger';
 import { seedAdmin } from './utils/seedAdmin';
 import { seedProducts } from './utils/seedProducts';
 import { seedCoupons } from './utils/seedCoupons';
+import { initSocket } from './socket';
 
 let server: Server;
 
@@ -22,6 +23,9 @@ async function main() {
     server = app.listen(config.port, () => {
       logger.info(`🚀 Server running on port ${config.port}`);
     });
+
+    // Initialize Socket.io
+    initSocket(server);
   } catch (error) {
     logger.error('❌ Failed to connect to database', error);
   }
