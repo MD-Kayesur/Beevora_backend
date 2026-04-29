@@ -24,6 +24,33 @@ export const initSocket = (server: HttpServer) => {
     socket.on('ping', () => {
       socket.emit('pong', { message: 'Socket is working! 🚀' });
     });
+
+    // Chat events
+    socket.on('chat-message', (data) => {
+      logger.info(`💬 Message from ${socket.id}: ${data.text}`);
+      
+      // Broadcast the user's message to everyone else (or everyone if we want global chat)
+      const broadcastData = {
+        ...data,
+        senderId: socket.id,
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Emit to everyone so all users see it
+      io.emit('chat-message', broadcastData);
+
+      // Optional: Add bot response for everyone to see
+      if (data.text.toLowerCase().includes('help')) {
+        setTimeout(() => {
+          const response = {
+            text: `Beevora Assistant: One of our team members will be with you shortly. Currently, ${io.engine.clientsCount} users are online!`,
+            sender: 'bot',
+            timestamp: new Date().toISOString(),
+          };
+          io.emit('chat-message', response);
+        }, 2000);
+      }
+    });
   });
 
   logger.info('📡 Socket.io initialized successfully');
