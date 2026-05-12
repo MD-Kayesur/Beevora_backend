@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { OrderService } from './order.service';
+import { createPaymentIntent } from './stripe.service';
 
 const createOrder = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.createOrder({
@@ -62,10 +63,25 @@ const deleteOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const createPaymentIntentController = catchAsync(async (req: Request, res: Response) => {
+  const { amount } = req.body;
+  const paymentIntent = await createPaymentIntent(amount);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Payment intent created successfully!',
+    data: {
+      clientSecret: paymentIntent.client_secret,
+    },
+  });
+});
+
 export const OrderController = {
   createOrder,
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
   deleteOrder,
+  createPaymentIntent: createPaymentIntentController,
 };

@@ -5,6 +5,7 @@ import auth from '../../middlewares/auth.middleware';
 const router = express.Router();
 
 router.post('/', auth('user', 'admin'), OrderController.createOrder);
+router.post('/create-payment-intent', auth('user', 'admin'), OrderController.createPaymentIntent);
 router.get('/my', auth('user', 'admin'), OrderController.getMyOrders);
 
 // Admin only routes
