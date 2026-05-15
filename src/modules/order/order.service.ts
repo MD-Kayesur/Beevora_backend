@@ -3,6 +3,7 @@ import { Product } from '../product/product.model';
 import { Honey } from '../honey/honey.model';
 import { Clothing } from '../clothing/clothing.model';
 import { SpreadsheetService } from './spreadsheet.service';
+import { InvoiceService } from './invoice.service';
 
 const createOrder = async (payload: IOrder): Promise<IOrder> => {
   // Check stock before creating order
@@ -28,8 +29,16 @@ const createOrder = async (payload: IOrder): Promise<IOrder> => {
   }
 
   // Save to Google Sheets (Async)
-  result.populate('items.product').then((populatedOrder) => {
+  result.populate(['items.product', 'user']).then(async (populatedOrder) => {
     SpreadsheetService.saveToSheet(populatedOrder);
+    
+    // Generate Invoice PDF
+    try {
+      const invoicePath = await InvoiceService.generateInvoicePDF(populatedOrder);
+      await Order.findByIdAndUpdate(result._id, { invoicePath });
+    } catch (err) {
+      console.error('Failed to generate invoice:', err);
+    }
   });
 
   return result;
@@ -55,10 +64,16 @@ const deleteOrder = async (id: string): Promise<IOrder | null> => {
   return result;
 };
 
+const getOrderById = async (id: string): Promise<IOrder | null> => {
+  const result = await Order.findById(id).populate(['user', 'items.product']);
+  return result;
+};
+
 export const OrderService = {
   createOrder,
   getMyOrders,
   getAllOrders,
+  getOrderById,
   updateOrderStatus,
   deleteOrder,
 };

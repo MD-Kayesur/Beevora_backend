@@ -33,6 +33,7 @@ const orderSchema = new mongoose_1.Schema({
         default: 'pending',
     },
     transactionId: { type: String },
+    invoicePath: { type: String },
 }, {
     timestamps: true,
     toJSON: {

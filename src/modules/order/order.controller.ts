@@ -4,6 +4,30 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { OrderService } from './order.service';
 import { createPaymentIntent } from './stripe.service';
+import path from 'path';
+import fs from 'fs';
+import ApiError from '../../utils/ApiError';
+
+const downloadInvoice = catchAsync(async (req: Request, res: Response) => {
+  const orderId = req.params.id as string;
+  const order = await OrderService.getOrderById(orderId);
+  if (!order) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+
+  // Ownership check
+  const userId = (order.user as any)._id?.toString() || order.user.toString();
+  if (req.user.role !== 'admin' && userId !== req.user.id) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to download this invoice');
+  }
+
+  if (!order.invoicePath || !fs.existsSync(order.invoicePath)) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not generated yet');
+  }
+
+  const fileName = `invoice_${(order as any)._id || orderId}.pdf`;
+  res.download(order.invoicePath, fileName);
+});
 
 const createOrder = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.createOrder({
@@ -83,5 +107,6 @@ export const OrderController = {
   getAllOrders,
   updateOrderStatus,
   deleteOrder,
+  downloadInvoice,
   createPaymentIntent: createPaymentIntentController,
 };

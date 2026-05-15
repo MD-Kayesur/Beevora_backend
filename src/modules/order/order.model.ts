@@ -15,6 +15,7 @@ export interface IOrder {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed';
   transactionId?: string;
+  invoicePath?: string;
 }
 
 const orderSchema = new Schema<IOrder>(
@@ -49,6 +50,7 @@ const orderSchema = new Schema<IOrder>(
       default: 'pending',
     },
     transactionId: { type: String },
+    invoicePath: { type: String },
   },
   {
     timestamps: true,

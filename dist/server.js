@@ -10,6 +10,7 @@ const logger_1 = __importDefault(require("./config/logger"));
 const seedAdmin_1 = require("./utils/seedAdmin");
 const seedProducts_1 = require("./utils/seedProducts");
 const seedCoupons_1 = require("./utils/seedCoupons");
+const socket_1 = require("./socket");
 let server;
 async function main() {
     try {
@@ -22,6 +23,8 @@ async function main() {
         server = app_1.default.listen(env_1.default.port, () => {
             logger_1.default.info(`🚀 Server running on port ${env_1.default.port}`);
         });
+        // Initialize Socket.io
+        (0, socket_1.initSocket)(server);
     }
     catch (error) {
         logger_1.default.error('❌ Failed to connect to database', error);

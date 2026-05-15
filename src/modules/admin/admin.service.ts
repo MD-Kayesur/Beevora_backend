@@ -1,6 +1,8 @@
 import { Order } from '../order/order.model';
 import { Product } from '../product/product.model';
 import { User } from '../user/user.model';
+import { Honey } from '../honey/honey.model';
+import { Clothing } from '../clothing/clothing.model';
 
 const getDashboardStats = async () => {
   const totalRevenue = await Order.aggregate([

@@ -11,6 +11,7 @@ const honeySchema = new mongoose_1.Schema({
     brand: { type: String, required: true },
     images: [{ type: String, required: true }],
     thumbnail: { type: String, required: true },
+    hoverImage: { type: String },
     rating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
     stock: { type: Number, required: true },

@@ -6,6 +6,7 @@ const product_model_1 = require("../product/product.model");
 const honey_model_1 = require("../honey/honey.model");
 const clothing_model_1 = require("../clothing/clothing.model");
 const spreadsheet_service_1 = require("./spreadsheet.service");
+const invoice_service_1 = require("./invoice.service");
 const createOrder = async (payload) => {
     // Check stock before creating order
     for (const item of payload.items) {
@@ -27,8 +28,16 @@ const createOrder = async (payload) => {
         });
     }
     // Save to Google Sheets (Async)
-    result.populate('items.product').then((populatedOrder) => {
+    result.populate(['items.product', 'user']).then(async (populatedOrder) => {
         spreadsheet_service_1.SpreadsheetService.saveToSheet(populatedOrder);
+        // Generate Invoice PDF
+        try {
+            const invoicePath = await invoice_service_1.InvoiceService.generateInvoicePDF(populatedOrder);
+            await order_model_1.Order.findByIdAndUpdate(result._id, { invoicePath });
+        }
+        catch (err) {
+            console.error('Failed to generate invoice:', err);
+        }
     });
     return result;
 };
@@ -48,10 +57,15 @@ const deleteOrder = async (id) => {
     const result = await order_model_1.Order.findByIdAndDelete(id);
     return result;
 };
+const getOrderById = async (id) => {
+    const result = await order_model_1.Order.findById(id).populate(['user', 'items.product']);
+    return result;
+};
 exports.OrderService = {
     createOrder,
     getMyOrders,
     getAllOrders,
+    getOrderById,
     updateOrderStatus,
     deleteOrder,
 };
