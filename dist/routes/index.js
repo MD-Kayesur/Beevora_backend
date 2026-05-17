@@ -14,6 +14,7 @@ const cart_route_1 = require("../modules/cart/cart.route");
 const honey_route_1 = require("../modules/honey/honey.route");
 const clothing_route_1 = require("../modules/clothing/clothing.route");
 const contact_route_1 = require("../modules/contact/contact.route");
+const review_route_1 = require("../modules/review/review.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -55,6 +56,10 @@ const moduleRoutes = [
     {
         path: '/contact',
         route: contact_route_1.ContactRoutes,
+    },
+    {
+        path: '/reviews',
+        route: review_route_1.ReviewRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
