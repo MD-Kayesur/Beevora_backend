@@ -12,6 +12,7 @@ import { HoneyRoutes } from '../modules/honey/honey.route';
 import { ClothingRoutes } from '../modules/clothing/clothing.route';
 import { ContactRoutes } from '../modules/contact/contact.route';
 import { ReviewRoutes } from '../modules/review/review.route';
+import { CategoryRoutes } from '../modules/category/category.route';
 
 const router = express.Router();
 
@@ -59,6 +60,10 @@ const moduleRoutes = [
   {
     path: '/reviews',
     route: ReviewRoutes,
+  },
+  {
+    path: '/categories',
+    route: CategoryRoutes,
   },
 ];
 
