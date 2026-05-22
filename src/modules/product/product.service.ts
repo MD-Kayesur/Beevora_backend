@@ -24,7 +24,8 @@ const getAllProducts = async (query: Record<string, unknown>) => {
       { description: { $regex: searchTerm, $options: 'i' } },
     ];
   }
-  if (category) anyQuery.category = category;
+  const categoryStr = typeof category === 'string' ? category.toLowerCase().trim() : '';
+
   if (isFeatured) anyQuery.isFeatured = isFeatured === 'true';
   if (minPrice || maxPrice) {
     anyQuery.price = {};
@@ -37,13 +38,13 @@ const getAllProducts = async (query: Record<string, unknown>) => {
   let products: any[] = [];
   let total = 0;
 
-  if (category === 'Honey') {
+  if (categoryStr === 'honey') {
     products = await Honey.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
     total = await Honey.countDocuments(anyQuery);
-  } else if (category === 'Clothing') {
+  } else if (categoryStr === 'clothing' || categoryStr === 'cloth') {
     products = await Clothing.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
     total = await Clothing.countDocuments(anyQuery);
-  } else if (!category || category === 'All') {
+  } else if (!categoryStr || categoryStr === 'all') {
     // If no specific category, provide a mix as requested (6 each if possible)
     const [honeyProducts, clothingProducts, baseProducts] = await Promise.all([
       Honey.find(anyQuery).sort(sort as string || '-createdAt').limit(6),
@@ -60,6 +61,8 @@ const getAllProducts = async (query: Record<string, unknown>) => {
     ]);
     total = honeyTotal + clothingTotal + baseTotal;
   } else {
+    const searchCategoryName = categoryStr.replace(/-/g, ' ');
+    anyQuery.category = { $regex: `^(${categoryStr}|${searchCategoryName})$`, $options: 'i' };
     products = await Product.find(anyQuery).sort(sort as string || '-createdAt').skip(skip).limit(Number(limit));
     total = await Product.countDocuments(anyQuery);
   }
