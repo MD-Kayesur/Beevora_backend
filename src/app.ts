@@ -11,6 +11,13 @@ import routes from './routes';
 const app: Application = express();
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3000',
+  'https://beevora-frontend.vercel.app'
+];
+
 app.use(helmet());
 app.use(compression());
 app.use(express.json());
@@ -18,8 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
   origin: (origin, callback) => {
-    // Reflect the request origin back to support credentials: true from any client
-    callback(null, true || '*');
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
 }));

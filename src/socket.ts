@@ -4,12 +4,24 @@ import logger from './config/logger';
 
 let io: Server;
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3000',
+  'https://beevora-frontend.vercel.app'
+];
+
 export const initSocket = (server: HttpServer) => {
   io = new Server(server, {
     cors: {
       origin: (requestOrigin, callback) => {
-        // Reflect the incoming origin back to allow dynamic socket connectivity
-        callback(null, requestOrigin || '*');
+        // Allow requests with no origin (like mobile apps, curl, etc.)
+        if (!requestOrigin) return callback(null, true);
+        if (allowedOrigins.indexOf(requestOrigin) !== -1 || requestOrigin.endsWith('.vercel.app')) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
       },
       methods: ['GET', 'POST'],
       credentials: true,
