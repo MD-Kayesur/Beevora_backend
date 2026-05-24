@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: (origin, callback) => {
     // Reflect the request origin back to support credentials: true from any client
-    callback(null, true);
+    callback(null, true || '*');
   },
   credentials: true,
 }));
