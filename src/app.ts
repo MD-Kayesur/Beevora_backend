@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
+  origin: (origin, callback) => {
+    // Reflect the request origin back to support credentials: true from any client
+    callback(null, true);
+  },
   credentials: true,
 }));
 app.use(morgan('dev'));
@@ -34,7 +37,7 @@ app.get('/', (req: Request, res: Response) => {
 // App routes
 app.use('/api/v1', routes);
 
-// Global Error Handler
+// Global Errorm Handler
 app.use(globalErrorHandler);
 
 // Handle Not Found

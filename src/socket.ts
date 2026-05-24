@@ -7,7 +7,10 @@ let io: Server;
 export const initSocket = (server: HttpServer) => {
   io = new Server(server, {
     cors: {
-      origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
+      origin: (requestOrigin, callback) => {
+        // Reflect the incoming origin back to allow dynamic socket connectivity
+        callback(null, requestOrigin || '*');
+      },
       methods: ['GET', 'POST'],
       credentials: true,
     },
