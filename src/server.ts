@@ -12,12 +12,6 @@ let server: Server;
 
 async function main() {
   try {
-    const dbUrl = config.database_url as string;
-    const maskedUrl = dbUrl ? dbUrl.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@') : 'undefined';
-    logger.info(`🔌 Connecting to MongoDB: ${maskedUrl}`);
-    await mongoose.connect(dbUrl);
-    logger.info('📦 Database connection successful');
-
     // Seed initial data
     await seedAdmin();
     await seedProducts();
