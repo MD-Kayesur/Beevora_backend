@@ -7,8 +7,16 @@ import morgan from 'morgan';
 import httpStatus from 'http-status';
 import globalErrorHandler from './middlewares/error.middleware';
 import routes from './routes';
+import mongoose from 'mongoose';
+import config from './config/env';
 
 const app: Application = express();
+
+// Connect to MongoDB (needed for serverless environments like Vercel)
+mongoose.connect(config.database_url as string)
+  .then(() => console.log('📦 Connected to MongoDB successfully'))
+  .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
+
 
 // Middleware
 const allowedOrigins = [
