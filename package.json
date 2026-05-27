@@ -4,9 +4,9 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "rimraf dist && tsc",
-    "start": "node dist/server.js",
+    "dev": "node init && ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "node init && rimraf dist && tsc",
+    "start": "node init && node dist/server.js",
     "seed": "ts-node seed.ts",
     "lint": "eslint . --ext .ts"
   },
@@ -30,6 +30,7 @@
     "mongodb": "^7.1.1",
     "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^8.0.5",
     "pdf-lib": "^1.17.1",
     "socket.io": "^4.8.3",
